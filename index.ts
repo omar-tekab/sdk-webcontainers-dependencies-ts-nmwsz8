@@ -12,30 +12,79 @@ const packageJson = `{
   }
 }`;
 
-const project: Project = {
-  title: 'Node serve demo',
-  description: 'Node.js server demo using the "serve" package',
-  template: 'node',
-  /**
-   * When you create a new project with WebContainers,
-   * `project.dependencies` will be ignored
-   * (if you look at the `package.json` file in the Preview,
-   * only `serve` is listed as dependencies).
-   * you need to provide your dependencies in the `package.json` file.
-   */
-  dependencies: {
-    express: '^4.17.1',
-    'express-graphql': '^0.12.0',
-    graphql: '^15.5.0',
-    nodemon: '^2.0.7',
-  },
-  files: {
-    'package.json': packageJson,
-    'public/index.html': '<h1>Hello world!</h1>',
-  },
-};
-
-sdk.embedProject('embed', project, {
-  openFile: 'package.json',
-  height: 600,
-});
+async function embedProject() {
+  sdk.embedProject(
+    'embed',
+    {
+      title: 'Node Starter',
+      description: 'A basic Node.js project',
+      template: 'node',
+      files: {
+        'app.js': `const git = require('isomorphic-git'); const http = require('isomorphic-git/http/node'); const fs = require('fs'); // Import the fs module async function cloneRepo() { try { await git.clone({ fs, http, dir: './node_modules/@@tekab-dev-team/storybook-devfactory', url: 'https://github.com/omar-tekab/sfdev', ref: 'main', }); console.log('Repository cloned successfully!'); } catch (error) { console.error('Failed to clone repository', error); } } cloneRepo();`,
+        '.stackblitzrc': `{ "startCommand": "mkdir aa" }`,
+        'public/index.html': `console.log('Hello World!)';`,
+        'index.html': `<!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <link rel="icon" href="/favicon.ico" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Vite App</title>
+          </head>
+          <body>
+            <div id="app"></div>
+            <script type="module" src="/src/main.js"></script>
+          </body>
+        </html>`,
+        'tsconfig.json': `{ "compilerOptions": { "target": "esnext", "useDefineForClassFields": true, "module": "esnext", "moduleResolution": "node", "strict": true, "jsx": "preserve", "sourceMap": true, "resolveJsonModule": true, "esModuleInterop": true, "lib": ["esnext", "dom"] }, "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"] }`,
+        'vite.config.js': `import { defineConfig } from 'vite'
+        import vue from '@vitejs/plugin-vue'
+        
+        // https://vitejs.dev/config/
+        export default defineConfig({
+          plugins: [vue()]
+        })`,
+        'src/main.js': `import { createApp } from 'vue'
+        import App from './App.vue'
+        
+        createApp(App).mount('#app')`,
+        'src/App.vue': `<template>
+        <div id="app"><h1>Vue Composition API</h1></div>
+      </template>
+      <script setup></script>
+      <style>
+      #app {
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: #2c3e50;
+        margin-top: 60px;
+      }
+      </style>`,
+        'package.json': `{
+          "name": "vite-js",
+          "version": "0.0.0",
+          "scripts": {
+            "dev": "vite",
+            "build": "vite build",
+            "serve": "vite preview"
+          },
+          "dependencies": {
+            "vue": "^3.2.11",
+            "isomorphic-git":"*",
+            "@vitejs/plugin-vue": "^1.6.0",
+            "@vue/compiler-sfc": "^3.2.11",
+            "vite": "^2.4.4"
+          },
+      "stackblitz": { "installDependencies": true, "startCommand": " mkdir aa && npm install && npm i isomorphic-git && npm run dev" }
+    }`,
+      },
+    },
+    {
+      height: 400,
+      openFile: 'src/main.js',
+      terminalHeight: 50,
+    }
+  );
+}
